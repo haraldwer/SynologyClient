@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Synology API</Title>
+    <Authors>Harald Wergeland (@haraldwer)</Authors>
+    <Description>This is a .Net implementation of the https API for Synology File Station. 
+Based on "Synology File Station Official API" available at https://www.synology.com.</Description>
+    <RepositoryType>git</RepositoryType>
+    <PackageId>SynologyAPI</PackageId>
+    <PackageTags>synology; .net 8.0</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
