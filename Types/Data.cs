@@ -1,14 +1,14 @@
 ﻿
 namespace Synology.DataTypes
 {
-    internal class APIInfo
+    public class APIInfo
     {
         public string path = "";
         public int minVersion = 0;
         public int maxVersion = 0;
     }
 
-    internal class Login
+    public class Login
     {
         public string sid = ""; 
     }
@@ -56,5 +56,22 @@ namespace Synology.DataTypes
         public List<ListEntry> shares = new();
         int total = 0;
         int offset = 0;
+    }
+
+    public enum ThumbnailSize
+    {
+        small,
+        medium,
+        large,
+        original
+    }
+
+    public enum ThumbnailRotation
+    {
+        None = 0,
+        Rotate_90,
+        Rotate_180,
+        Rotate_270,
+        Rotate_360
     }
 }

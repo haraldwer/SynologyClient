@@ -9,6 +9,7 @@ namespace Synology
             {
                 // Custom errors
                 case 1: return "Connection timeout";
+                case 2: return "Failed to parse http response";
 
                 // From the official docs
                 case 100: return "Unknown error";
@@ -43,6 +44,15 @@ namespace Synology
                 case 420: return "Illegal file name on FAT file system";
                 case 421: return "Device or resource busy";
                 case 599: return "No such task of the file operation";
+
+                // Upload
+                case 1800: return "There is no Content-Length information in the HTTP header or the received size doesn't match the value of Content-Length information in the HTTP header.";
+                case 1801: return "Wait too long, no date can be received from client (Default maximum wait time is 3600 seconds).";
+                case 1802: return "No filename information in the last part of file content.";
+                case 1803: return "Upload connection is cancelled.";
+                case 1804: return "Failed to upload oversized file to FAT file system.";
+                case 1805: return "Can't overwrite or skip the existing file, if no overwrite parameter is given.";
+
             }
             return "Unknown error code"; 
         }

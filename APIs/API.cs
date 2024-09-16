@@ -11,43 +11,67 @@ namespace Synology
 
         internal API(Client InClient) : base(InClient) { }
 
-        public bool Connect()
+        public async Task<Response<string>> Connect()
         {
             string request = OwningClient.ConstructRequest(
                 "query.cgi", "SYNO.API.Info", 1,
                 "&method=query" +
                 "&query=SYNO.API.Auth");
 
-            Response<string> response = OwningClient.Request(request);
+            Response<HttpResponseMessage> response = await OwningClient.RequestHttp(request);
             if (!response.success)
-                return false;
+            {
+                return new()
+                {
+                    success = false,
+                    error = response.error,
+                };
+            }
 
             // Parse json manually, because the format is weird
             try
             {
-                JObject json = JObject.Parse(response.data);
+                string content = response.data.Content.ReadAsStringAsync().Result;
+                JObject json = JObject.Parse(content);
                 APIInfo info = json["data"]["SYNO.API.Auth"].ToObject<APIInfo>();
                 if (info.maxVersion < 1 || info.minVersion < 1)
                 {
                     Trace.WriteLine("Invalid Auth API version. Max: " + info.maxVersion + " Min: " + info.minVersion);
-                    return false;
+                    return new()
+                    {
+                        success = false
+                    };
                 }
                 if (info.path == "")
                 {
                     Trace.WriteLine("Invalid cgi path: " + info.path);
-                    return false;
+                    return new()
+                    {
+                        success = false
+                    };
                 }
-                return true;
+                return new()
+                {
+                    success = true,
+                    data = ""
+                };
             }
             catch (Exception ex)
             {
                 Trace.WriteLine(ex.ToString());
                 Trace.WriteLine("Failed to parse response");
-                return false;
+                return new()
+                {
+                    success = false,
+                    error = new() 
+                    {                         
+                        code = 2
+                    },
+                };
             }
         }
 
-        public bool Login(string InUser, string InPassword, string InSession = "DotNet")
+        public async Task<Response<Login>> Login(string InUser, string InPassword, string InSession = "DotNet")
         {
             string request = OwningClient.ConstructRequest("auth.cgi", "SYNO.API.Auth", 3,
                 "&method=login" +
@@ -56,23 +80,23 @@ namespace Synology
                 "&session=" + InSession + 
                 "&format=cookie");
 
-            var result = OwningClient.Request<Login>(request);
+            var result = await OwningClient.Request<Login>(request);
             if (!result.success || result.data == null)
-                return false;
+                return result;
             SID = result.data.sid;
-            return true;
+            return result;
         }
 
-        public bool Logout(string InSession = "DotNet")
+        public async Task<Response<string>> Logout(string InSession = "DotNet")
         {
             string request = OwningClient.ConstructRequest("auth.cgi", "SYNO.API.Auth", 1,
                 "&method=logout" +
                 "&session=" + InSession);
 
-            Response<string> result = OwningClient.Request(request);
+            Response<string> result = await OwningClient.Request<string>(request);
             if (result.success)
-                SID = ""; 
-            return result.success;
+                SID = "";
+            return result;
         }
     }
 }

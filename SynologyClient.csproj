@@ -6,14 +6,15 @@
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Synology API</Title>
+    <Title>Synology Client</Title>
     <Authors>Harald Wergeland (@haraldwer)</Authors>
     <Description>This is a .Net implementation of the https API for Synology File Station based on "Synology File Station Official API" available at https://www.synology.com.</Description>
     <RepositoryType>git</RepositoryType>
-    <PackageId>SynologyAPI</PackageId>
+    <PackageId>SynologyClient</PackageId>
     <PackageTags>synology; .net 8.0</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Version>0.1.0</Version>
+    <PackageProjectUrl>https://github.com/haraldwer/SynologyClient</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

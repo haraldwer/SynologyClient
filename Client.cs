@@ -32,66 +32,89 @@ namespace Synology
                 "" + InRequest;
         }
 
-        internal Response<T> Request<T>(string InRequest)
+        internal async Task<Response<T>> Request<T>(string InRequest, HttpContent? InContent = null)
         {
-            Response<string> jsonResponse = Request(InRequest);
-            if (jsonResponse.success && jsonResponse.data != null)
+            Response<HttpResponseMessage> httpResponse = await RequestHttp(InRequest, InContent);
+            int code = httpResponse.error != null ? httpResponse.error.code : 0;
+
+            if (httpResponse.success && httpResponse.data != null)
             {
-                Response<T>? response = JsonConvert.DeserializeObject<Response<T>>(jsonResponse.data);
-                if (response != null)
+                try
                 {
-                    response.success = jsonResponse.success;
-                    response.error = jsonResponse.error;
-                    return response;
+                    string content = await httpResponse.data.Content.ReadAsStringAsync();
+                    var response = JsonConvert.DeserializeObject<Response<T>>(content);
+                    if (response != null)
+                        return response; 
+                }
+                catch (Exception ex)
+                {
+                    code = 2;
+                    Trace.WriteLine(ex.ToString());
+                    Trace.WriteLine("Error response: " + ErrorHandling.GetMessageFromCode(code));
                 }
             }
+
             return new()
             {
-                success = jsonResponse.success,
-                error = jsonResponse.error
+                success = false,
+                error = new()
+                {
+                    code = code
+                }
             };
         }
 
-        internal Response<string> Request(string InRequest)
+        internal async Task<Response<byte[]>> RequestBytes(string InRequest)
+        {
+            byte[]? bytes = null;
+            var httpResponse = await RequestHttp(InRequest);
+            if (httpResponse.success && httpResponse.data != null)
+                bytes = httpResponse.data.Content.ReadAsByteArrayAsync().Result;
+            return new()
+            {
+                success = httpResponse.success,
+                error = httpResponse.error,
+                data = bytes
+            };
+        }
+
+        internal async Task<Response<HttpResponseMessage>> RequestHttp(string InRequest, HttpContent? InContent = null)
         {
             Trace.WriteLine("Request: " + InRequest);
 
+            int code = 1;
             try
             {
-                using HttpResponseMessage response = HttpClient.GetAsync(InRequest).Result;
-                if (!response.IsSuccessStatusCode)
+                HttpResponseMessage? response = null;
+                if (InContent != null)
+                    response = await HttpClient.PostAsync(InRequest, InContent);
+                else
+                    response = await HttpClient.GetAsync(InRequest);
+
+                code = (int)response.StatusCode;
+                if (response.IsSuccessStatusCode)
                 {
-                    Trace.WriteLine("Error response: " + ErrorHandling.GetMessageFromCode((int)response.StatusCode));
+                    Trace.WriteLine("Success response");
                     return new()
                     {
-                        success = false,
-                        error = new Error()
-                        {
-                            code = (int)response.StatusCode
-                        }
+                        success = true,
+                        data = response
                     };
                 }
-
-                var jsonResponse = response.Content.ReadAsStringAsync().Result;
-                Trace.WriteLine("Response: " + jsonResponse);
-                return new()
-                {
-                    success = true,
-                    data = jsonResponse
-                };
             }
             catch (Exception ex)
             {
-                Trace.WriteLine("Error response: " + ErrorHandling.GetMessageFromCode(1));
-                return new()
-                {
-                    success = false,
-                    error = new Error()
-                    {
-                        code = 1
-                    }
-                };
+                Trace.WriteLine(ex.ToString());
             }
+
+            return new()
+            {
+                success = false,
+                error = new Error()
+                {
+                    code = code
+                }
+            };
         }
     }
 }
