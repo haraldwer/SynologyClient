@@ -13,7 +13,7 @@
     <PackageId>SynologyClient</PackageId>
     <PackageTags>synology; .net 8.0</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <PackageProjectUrl>https://github.com/haraldwer/SynologyClient</PackageProjectUrl>
   </PropertyGroup>
 
