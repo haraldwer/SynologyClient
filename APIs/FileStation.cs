@@ -1,8 +1,5 @@
 ﻿
 using Synology.DataTypes;
-using static System.Net.Mime.MediaTypeNames;
-using System.Net.Http.Headers;
-using System.Diagnostics;
 
 namespace Synology
 {
@@ -111,7 +108,7 @@ namespace Synology
             content += "Content-type: multipart/form-data, boundary=" + boundary + "\r\n";
             content += body;
 
-            return await OwningClient.Request("/webapi/entry.cgi", new StringContent(content));
+            return await OwningClient.RequestHttp("/webapi/entry.cgi", new StringContent(content));
         }
 
         public async Task<Response<byte[]>> Download(string InPath)
@@ -121,18 +118,21 @@ namespace Synology
                 "&method=download" +
                 "&path=" + FormatPath(InPath) +
                 "&mode=%22open%22");
-            
-            byte[]? bytes = null;
-            var httpResponse = await OwningClient.Request(request);
-            if (httpResponse.success && httpResponse.data != null)
-                bytes = httpResponse.data.Content.ReadAsByteArrayAsync().Result;
 
-            return new()
-            {
-                success = httpResponse.success,
-                error = httpResponse.error,
-                data = bytes
-            };
+            return await OwningClient.RequestBytes(request);
+        }
+
+        public async Task<Response<byte[]>> Thumbnail(string InPath, ThumbnailSize InSize = ThumbnailSize.small, ThumbnailRotation InRotation = ThumbnailRotation.None)
+        {
+            // Example: /webapi/entry.cgi?api=SYNO.FileStation.Thumb&version=2&method=get&path=%22%2Fphoto%2Ftest.jpg%22
+
+            string request = OwningClient.ConstructRequest("entry.cgi", "SYNO.FileStation.Thumb", 2,
+                "&method=get" +
+                "&path=" + FormatPath(InPath) +
+                "&size=" + InSize.ToString() + 
+                "&rotate=" + (int)InRotation);
+
+            return await OwningClient.RequestBytes(request);
         }
     }
 }

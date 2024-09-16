@@ -18,7 +18,7 @@ namespace Synology
                 "&method=query" +
                 "&query=SYNO.API.Auth");
 
-            Response<HttpResponseMessage> response = await OwningClient.Request(request);
+            Response<HttpResponseMessage> response = await OwningClient.RequestHttp(request);
             if (!response.success)
             {
                 return new()

@@ -57,4 +57,21 @@ namespace Synology.DataTypes
         int total = 0;
         int offset = 0;
     }
+
+    public enum ThumbnailSize
+    {
+        small,
+        medium,
+        large,
+        original
+    }
+
+    public enum ThumbnailRotation
+    {
+        None = 0,
+        Rotate_90,
+        Rotate_180,
+        Rotate_270,
+        Rotate_360
+    }
 }

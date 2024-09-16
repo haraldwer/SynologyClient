@@ -34,7 +34,7 @@ namespace Synology
 
         internal async Task<Response<T>> Request<T>(string InRequest, HttpContent? InContent = null)
         {
-            Response<HttpResponseMessage> httpResponse = await Request(InRequest, InContent);
+            Response<HttpResponseMessage> httpResponse = await RequestHttp(InRequest, InContent);
             int code = httpResponse.error != null ? httpResponse.error.code : 0;
 
             if (httpResponse.success && httpResponse.data != null)
@@ -64,7 +64,21 @@ namespace Synology
             };
         }
 
-        internal async Task<Response<HttpResponseMessage>> Request(string InRequest, HttpContent? InContent = null)
+        internal async Task<Response<byte[]>> RequestBytes(string InRequest)
+        {
+            byte[]? bytes = null;
+            var httpResponse = await RequestHttp(InRequest);
+            if (httpResponse.success && httpResponse.data != null)
+                bytes = httpResponse.data.Content.ReadAsByteArrayAsync().Result;
+            return new()
+            {
+                success = httpResponse.success,
+                error = httpResponse.error,
+                data = bytes
+            };
+        }
+
+        internal async Task<Response<HttpResponseMessage>> RequestHttp(string InRequest, HttpContent? InContent = null)
         {
             Trace.WriteLine("Request: " + InRequest);
 
