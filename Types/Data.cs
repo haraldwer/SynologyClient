@@ -1,14 +1,14 @@
 ﻿
 namespace Synology.DataTypes
 {
-    internal class APIInfo
+    public class APIInfo
     {
         public string path = "";
         public int minVersion = 0;
         public int maxVersion = 0;
     }
 
-    internal class Login
+    public class Login
     {
         public string sid = ""; 
     }
