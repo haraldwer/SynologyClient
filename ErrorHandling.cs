@@ -1,5 +1,5 @@
 ﻿
-namespace SynologyAPI
+namespace Synology
 {
     public static class ErrorHandling
     {
@@ -7,6 +7,10 @@ namespace SynologyAPI
         {
             switch (InCode) 
             {
+                // Custom errors
+                case 1: return "Connection timeout";
+
+                // From the official docs
                 case 100: return "Unknown error";
                 case 101: return "No parameter of API, method or version";
                 case 102: return "The requested API does not exist";

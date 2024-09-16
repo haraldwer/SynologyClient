@@ -8,11 +8,12 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Synology API</Title>
     <Authors>Harald Wergeland (@haraldwer)</Authors>
-    <Description>This is a .Net implementation of the https API for Synology File Station. 
-Based on "Synology File Station Official API" available at https://www.synology.com.</Description>
+    <Description>This is a .Net implementation of the https API for Synology File Station based on "Synology File Station Official API" available at https://www.synology.com.</Description>
     <RepositoryType>git</RepositoryType>
     <PackageId>SynologyAPI</PackageId>
     <PackageTags>synology; .net 8.0</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,10 @@ Based on "Synology File Station Official API" available at https://www.synology.
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

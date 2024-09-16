@@ -3,24 +3,37 @@ This is a .Net implementation of the https API for Synology File Station based o
 
 Example: 
 ```cs
-SynologyAPI.Client client = new("https://nas.quickconnect.to", 5001, TimeSpan.FromSeconds(10));
-if (!client.Connect())
+using Synology.DataTypes;
+using Synology;
+
+// Connecting and logging in
+Client client = new("https://nas.quickconnect.to", 5001, TimeSpan.FromSeconds(10));
+if (!client.API.Connect())
     return;
-if (!client.Login("user", "password"))
+if (!client.API.Login("user", "password"))
     return;
-var files = client.List("/Pictures", []);
-foreach (var filePath in files)
-    Console.WriteLine(filePath);
-client.Logout();
+
+// Getting drives
+Response<SharedDriveList> sharedDriveResponse = client.FileStation.ListSharedDrives([]);
+foreach (ListEntry item in sharedDriveResponse.data.shares)
+    Console.WriteLine(item.name);
+
+// Getting files
+Response<FileList> listResponse = client.FileStation.List("/Pictures", []);
+foreach (ListEntry item in listResponse.data.files)
+    Console.WriteLine(item.name);
+
+// Logging out
+client.API.Logout();
 ```
 
 Features:
 	- Connect, query the API
 	- Login, Logout
 	- List files in directory
+	- List shared drives
 
 Planned: 
-	- List shared drives
 	- Download file
 	- Upload file
 	- Get image thumbnail

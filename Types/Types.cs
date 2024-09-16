@@ -1,12 +1,6 @@
 ﻿
-namespace SynologyAPI.Types
+namespace Synology
 {
-    public class HttpResponse
-    {
-        int error = 0;
-        string response = "";
-    }
-
     public class ErrorInfo
     {
         public int code = 0;
