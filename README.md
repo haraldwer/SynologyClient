@@ -28,15 +28,15 @@ client.API.Logout();
 ```
 
 Features:
-	- Connect, query the API
-	- Login, Logout
-	- List files in directory
-	- List shared drives
+- Connect, query the API
+- Login, Logout
+- List files in directory
+- List shared drives
 
 Planned: 
-	- Download file
-	- Upload file
-	- Get image thumbnail
+- Download file
+- Upload file
+- Get image thumbnail
 
 "Synology File Station Official API" direct link:
 https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/FileStation/All/enu/Synology_File_Station_API_Guide.pdf
