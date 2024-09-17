@@ -4,6 +4,15 @@ This is a .Net implementation of the https API for Synology File Station based o
 ## NuGet
 [![NuGet Status](https://img.shields.io/nuget/v/SynologyClient.svg?style=flat)](https://www.nuget.org/packages/SynologyClient/) [![NuGet](https://img.shields.io/nuget/dt/SynologyClient.svg)](https://www.nuget.org/packages/SynologyClient)
 
+## Features
+- Connect
+- Login, Logout
+- List shared drives
+- List files and directories
+- Download
+- Upload
+- Get thumbnails
+
 ## Example
 ```cs
 using Synology.DataTypes;
@@ -45,17 +54,8 @@ if (uploadResponse.success)
 client.API.Logout();
 ```
 
-## Roadmap
-Features:
-- Connect, query the API
-- Login, Logout
-- List files in directory
-- List shared drives
-- Download file
-- Get image thumbnail
-
-Planned: 
-- Upload file (WIP)
+## Planned features
+- File sharing
 
 ## License
 [MIT](LICENSE)
