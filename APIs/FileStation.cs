@@ -1,5 +1,8 @@
 ﻿
 using Synology.DataTypes;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Synology
 {
@@ -80,35 +83,43 @@ namespace Synology
             \--AaB03x--
             */
 
-            // TODO: Improve this, build using httpcontent instead
-
             string boundary = "AaB03x";
-            string body = "";
-            Action<string, string> addParameter = (string paramName, string param) =>
+            using var formData = new MultipartFormDataContent(boundary);
+            formData.Headers.ContentType = new MediaTypeHeaderValue("multipart/form-data");
+            formData.Headers.ContentType.Parameters.Add(new NameValueHeaderValue("boundary", boundary));
+
+            Func<string, string, StringContent> getStringContent = (string name, string value) => 
             {
-                body += "\\--" + boundary + "\r\n";
-                body += "content-disposition: form-data; name=\"" + paramName + "\"\r\n";
-                body += param + "\r\n";
+                var sc = new StringContent(value);
+                sc.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                {
+                    Name = $"\"{name}\""
+                };
+                sc.Headers.ContentType = null;
+                return sc;
             };
-            addParameter("api", "SYNO.FileStation.Upload");
-            addParameter("version", "2");
-            addParameter("method", "upload");
-            addParameter("path", InPath);
-            addParameter("create_parents", (InCreateParents ? "true" : "false"));
-            addParameter("overwrite", (InOverwrite ? "true" : "false"));
-            body += "\\--" + boundary + "\r\n";
 
-            body += "content-disposition: form-data; name=\"file\"; filename=\"" + InFileName + "\"\r\n";
-            body += "Content-Type: application/octet-stream\r\n";
-            body += System.Text.Encoding.Default.GetString(InFileContent);
-            body += "\r\n\\--" + boundary + "--\r\n";
+            var overwriteValue = InOverwrite ? "true" : "false";
+            if (true) //(apiInfo.Version >= 3) 
+                overwriteValue = InOverwrite ? "overwrite" : "skip"; // 3rd option: Ask
 
-            string content = "";
-            content += "Content-Length:" + body.Length + "\r\n";
-            content += "Content-type: multipart/form-data, boundary=" + boundary + "\r\n";
-            content += body;
+            formData.Add(getStringContent("api", "SYNO.FileStation.Upload"));
+            formData.Add(getStringContent("version", "3"));
+            formData.Add(getStringContent("method", "upload"));
+            formData.Add(getStringContent("path", InPath));
+            formData.Add(getStringContent("overwrite", overwriteValue));
+            formData.Add(getStringContent("create_parents", InCreateParents ? "true" : "false"));
 
-            return await OwningClient.RequestHttp("/webapi/entry.cgi", new StringContent(content));
+            using var fileContent = new ByteArrayContent(InFileContent);
+            var urlEncodedFilename = Uri.EscapeDataString(InFileName);
+            var headerValue = $@"form-data; name=""file""; filename=""{InFileName}""; filename*=UTF-8''{urlEncodedFilename}";
+            var bytes = Encoding.UTF8.GetBytes(headerValue);
+            headerValue = bytes.Aggregate("", (current, b) => current + (char)b);
+            fileContent.Headers.Add("Content-Disposition", headerValue);
+            formData.Add(fileContent);
+
+            string request = OwningClient.ConstructRequest("entry.cgi", "SYNO.FileStation.Upload", 2, "&method=upload");
+            return await OwningClient.RequestHttp("/webapi/entry.cgi", formData);
         }
 
         public async Task<Response<byte[]>> Download(string InPath)
