@@ -29,7 +29,7 @@ namespace Synology
                 "/webapi/" + InRequestType +
                 "?api=" + InAPI +
                 "&version=" + InVersion.ToString() +
-                "" + InRequest;
+                InRequest;
         }
 
         internal async Task<Response<T>> Request<T>(string InRequest, HttpContent? InContent = null)
