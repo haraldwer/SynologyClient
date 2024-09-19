@@ -1,6 +1,9 @@
 ﻿## Synology Client
 This is a .Net implementation of the https API for Synology File Station based on [Synology File Station Official API](https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/FileStation/All/enu/Synology_File_Station_API_Guide.pdf) available at [synology.com](https://www.synology.com).
 
+The API is not very complicated. Most functions and parameters are commented. 
+Check out the example and feel free to ask if you are unsure about anything. 
+
 ## NuGet
 [![NuGet Status](https://img.shields.io/nuget/v/SynologyClient.svg?style=flat)](https://www.nuget.org/packages/SynologyClient/) [![NuGet](https://img.shields.io/nuget/dt/SynologyClient.svg)](https://www.nuget.org/packages/SynologyClient)
 
@@ -13,6 +16,9 @@ This is a .Net implementation of the https API for Synology File Station based o
 - Download
 - Upload
 - Get thumbnails
+
+## Planned features
+- File sharing
 
 ## Example
 ```cs
@@ -58,9 +64,6 @@ if (uploadResponse.success)
 // Logging out
 client.API.Logout();
 ```
-
-## Planned features
-- File sharing
 
 ## License
 [MIT](LICENSE)
