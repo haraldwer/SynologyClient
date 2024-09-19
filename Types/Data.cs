@@ -13,49 +13,20 @@ namespace Synology.DataTypes
         public string sid = ""; 
     }
 
-    public class ListEntryOwner
+    public class Owner
     {
-        public string group;
-        public string user;
+        public string group = "";
+        public string user = "";
+        public int uid = 0;
+        public int gid = 0;
     }
 
-    public class ListEntryTime
+    public class Time
     {
         public long atime = 0;
         public long crtime = 0;
         public long ctime = 0;
         public long mtime = 0;
-    }
-
-    public class ListEntryAdditional
-    {
-        public string real_path = "";
-        public int size = 0;
-        public string type = "";
-        public ListEntryOwner owner;
-        public ListEntryTime time;
-    }
-
-    public class ListEntry
-    {
-        public ListEntryAdditional additional = new();
-        public bool isdir = false;
-        public string name = "";
-        public string path = "";
-    }
-
-    public class FileList
-    {
-        public List<ListEntry> files = new();
-        int total = 0;
-        int offset = 0;
-    }
-
-    public class SharedDriveList
-    {
-        public List<ListEntry> shares = new();
-        int total = 0;
-        int offset = 0;
     }
 
     public enum ThumbnailSize

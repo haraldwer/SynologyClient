@@ -11,6 +11,9 @@ namespace Synology
 
         internal API(Client InClient) : base(InClient) { }
 
+        /// <summary>
+        /// Connect and verify the API version
+        /// </summary>
         public async Task<Response<string>> Connect()
         {
             string request = OwningClient.ConstructRequest(
@@ -71,8 +74,19 @@ namespace Synology
             }
         }
 
+        /// <summary>
+        /// Login and recieve a sid token for future requests. <br />
+        /// <br />
+        /// Notes: <br />
+        /// - The applied sid will expire after 7 days by default.<br />
+        /// - 2-step verification is not yet supported by WebAPI.<br />
+        /// </summary>
+        /// <param name="InUser">Account user name</param>
+        /// <param name="InPassword">Account password</param>
+        /// <param name="InSession">Optional. Specify a unique session string if you expect multiple parallel connections from your application. </param>
         public async Task<Response<Login>> Login(string InUser, string InPassword, string InSession = "DotNet")
         {
+            // Example: /webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account=admin&passwd=12345&session=FileStation&format=cookie
             string request = OwningClient.ConstructRequest("auth.cgi", "SYNO.API.Auth", 3,
                 "&method=login" +
                 "&account=" + InUser +
@@ -80,20 +94,25 @@ namespace Synology
                 "&session=" + InSession + 
                 "&format=cookie");
 
-            var result = await OwningClient.Request<Login>(request);
+            var result = await OwningClient.RequestObject<Login>(request);
             if (!result.success || result.data == null)
                 return result;
             SID = result.data.sid;
             return result;
         }
 
+        /// <summary>
+        /// Logout and invalidate the sid recieved when logging in. 
+        /// </summary>
+        /// <param name="InSession">Optional. Session string should match the one specified on login. </param>
         public async Task<Response<string>> Logout(string InSession = "DotNet")
         {
+            // Example: /webapi/auth.cgi?api=SYNO.API.Auth&version=1&method=logout&session=FileStation
             string request = OwningClient.ConstructRequest("auth.cgi", "SYNO.API.Auth", 1,
                 "&method=logout" +
                 "&session=" + InSession);
 
-            Response<string> result = await OwningClient.Request<string>(request);
+            Response<string> result = await OwningClient.RequestObject<string>(request);
             if (result.success)
                 SID = "";
             return result;
