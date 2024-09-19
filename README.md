@@ -1,7 +1,7 @@
 ﻿## Synology Client
 This is a .Net implementation of the https API for Synology File Station based on [Synology File Station Official API](https://global.synologydownload.com/download/Document/Software/DeveloperGuide/Package/FileStation/All/enu/Synology_File_Station_API_Guide.pdf) available at [synology.com](https://www.synology.com).
 
-The API is not very complicated. Most functions and parameters are commented. 
+Most functions and parameters are commented. \
 Check out the example and feel free to ask if you are unsure about anything. 
 
 ## NuGet
