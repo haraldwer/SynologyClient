@@ -9,6 +9,7 @@ This is a .Net implementation of the https API for Synology File Station based o
 - Login, Logout
 - List shared drives
 - List files and directories
+- Get file info
 - Download
 - Upload
 - Get thumbnails
@@ -33,6 +34,10 @@ Console.WriteLine("Recieved " + sharedDriveResponse.data.shares.Count + " shared
 // Getting files
 Response<FileList> listResponse = client.FileStation.List("/Pictures", []).Result;
 Console.WriteLine("Recieved " + listResponse.data.files.Count + " files");
+
+// Getting info about specific files
+Response<FileList> info = client.FileStation.Info(["/Home/note.txt"], [ ListAdditionalParameters.size ]).Result;
+Console.WriteLine("File size is " + info.data.files.Last().additional.size);
 
 // Downloading a file
 Response<byte[]> downloadResponse = client.FileStation.Download("/Pictures/picture.png").Result;
