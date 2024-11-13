@@ -47,7 +47,6 @@ namespace Synology
                 try
                 {
                     string content = await httpResponse.data.Content.ReadAsStringAsync();
-                    Trace.WriteLine("Response: " + content); 
                     var response = JsonConvert.DeserializeObject<Response<T>>(content);
                     if (response != null)
                         return response; 

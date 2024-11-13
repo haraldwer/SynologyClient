@@ -1,6 +1,7 @@
 ﻿
 using Synology.DataTypes;
 using Synology.Parameters;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -166,7 +167,7 @@ namespace Synology
             formData.Add(getStringContent("path", InPath));
             formData.Add(getStringContent("create_parents", InCreateParents ? "true" : "false"));
             if (InUploadFileExistsBehavior != UploadFileExistBehaviorParameter.throw_error)
-                formData.Add(getStringContent("overwrite", nameof(InUploadFileExistsBehavior)));
+                formData.Add(getStringContent("overwrite", Enum.GetName(InUploadFileExistsBehavior.GetType(), InUploadFileExistsBehavior)));
 
             using var fileContent = new ByteArrayContent(InFileContent);
             var urlEncodedFilename = Uri.EscapeDataString(InFileName);
